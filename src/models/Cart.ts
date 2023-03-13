@@ -13,5 +13,5 @@ export interface ICarts {
 
 export interface ICartContext extends ICarts {
   addItem: (item: ICartItem) => void;
-  removeItem: (id: string) => void;
+  removeItem: (id: string, isRemoveAll: boolean) => void;
 }

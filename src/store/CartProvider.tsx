@@ -44,13 +44,13 @@ const cartReducer: Reducer<ICarts, Action> = (state, action) => {
   }
   if (action.type === "REMOVE") {
     const existingCartItemIndex = itemsCopy.findIndex((item) => item.id === action.payload);
-    const existingCartItem = itemsCopy[existingCartItemIndex];
+    const existingCartItem = itemsCopy[existingCartItemIndex]!;
     if (action.isRemoveAll) {
-      const updatedTotalAmount = state.totalAmount - existingCartItem!.amount;
-      const updatedTotalPrice = state.totalPrice - existingCartItem!.amount * existingCartItem!.price;
-      const updatedItems = itemsCopy.splice(existingCartItemIndex, 1);
+      const updatedTotalAmount = state.totalAmount - existingCartItem.amount;
+      const updatedTotalPrice = state.totalPrice - existingCartItem.amount * existingCartItem.price;
+      itemsCopy.splice(existingCartItemIndex, 1);
       return {
-        items: updatedItems,
+        items: itemsCopy,
         totalAmount: updatedTotalAmount,
         totalPrice: updatedTotalPrice,
       };
@@ -79,12 +79,10 @@ const CartProvider = ({ children }: CartProviderProps) => {
   const [cartState, dispatchCartAction] = useReducer(cartReducer, cartStateDefault);
 
   const addItemToCartHandler = (item: ICartItem) => {
-    console.log("add");
     dispatchCartAction({ type: "ADD", payload: item });
   };
 
-  const removeItemFromCartHandler = (id: string, isRemoveAll: boolean = false) => {
-    console.log("remove");
+  const removeItemFromCartHandler = (id: string, isRemoveAll: boolean) => {
     dispatchCartAction({ type: "REMOVE", payload: id, isRemoveAll: isRemoveAll });
   };
 

@@ -5,9 +5,10 @@ import classes from "./CartItem.module.css";
 interface CartItemProps extends ICartItem {
   onAdd: () => void;
   onRemove: () => void;
+  onRemoveAll: () => void;
 }
 
-const CartItem = ({ name, price, amount, onAdd, onRemove }: CartItemProps) => {
+const CartItem = ({ name, price, amount, onAdd, onRemove, onRemoveAll }: CartItemProps) => {
   const priceFormated = `$${price.toFixed(2)}`;
 
   return (
@@ -20,6 +21,7 @@ const CartItem = ({ name, price, amount, onAdd, onRemove }: CartItemProps) => {
         </div>
       </div>
       <div className={classes.actions}>
+        <button onClick={onRemoveAll}>X</button>
         <button onClick={onRemove}>-</button>
         <button onClick={onAdd}>+</button>
       </div>

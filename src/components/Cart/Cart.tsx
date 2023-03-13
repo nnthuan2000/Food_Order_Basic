@@ -25,8 +25,12 @@ const Cart = ({ onClose }: CartProps) => {
     });
   };
 
-  const removeItemFromCartHandler = (id: string) => {
-    removeItem(id);
+  const removeItemFromCartHandler = (id: string, isRemoveAll: boolean) => {
+    removeItem(id, isRemoveAll);
+  };
+
+  const removeAllItemFromCartHandler = (id: string, isRemoveAll: boolean) => {
+    removeItem(id, isRemoveAll);
   };
 
   const cartItems = (
@@ -36,7 +40,8 @@ const Cart = ({ onClose }: CartProps) => {
           key={item.id}
           {...item}
           onAdd={addItemToCartHandler.bind(null, item)}
-          onRemove={removeItemFromCartHandler.bind(null, item.id)}
+          onRemove={removeItemFromCartHandler.bind(null, item.id, false)}
+          onRemoveAll={removeAllItemFromCartHandler.bind(null, item.id, true)}
         />
       ))}
     </ul>
