@@ -16,7 +16,7 @@ const Cart = ({ onClose }: CartProps) => {
   const { items, totalPrice, addItem, removeItem } = useContext(CartContext);
 
   const hasItem = items.length > 0;
-  const totalPriceFormated = `$${totalPrice.toFixed(2)}`;
+  const totalPriceFormated = `$${Math.abs(totalPrice).toFixed(2)}`;
 
   const addItemToCartHandler = (item: ICartItem) => {
     addItem({
