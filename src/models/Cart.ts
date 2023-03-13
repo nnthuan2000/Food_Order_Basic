@@ -8,6 +8,7 @@ export interface ICartItem {
 export interface ICarts {
   items: ICartItem[];
   totalAmount: number;
+  totalPrice: number;
 }
 
 export interface ICartContext extends ICarts {

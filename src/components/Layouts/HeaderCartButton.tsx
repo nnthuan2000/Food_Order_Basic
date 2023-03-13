@@ -10,7 +10,7 @@ interface HeaderCartButtonProps {
 }
 
 const HeaderCartButton = ({ onShowCart }: HeaderCartButtonProps) => {
-  const cartCtx = useContext(CartContext);
+  const { totalAmount } = useContext(CartContext);
 
   return (
     <button className={classes.button} onClick={onShowCart}>
@@ -18,7 +18,7 @@ const HeaderCartButton = ({ onShowCart }: HeaderCartButtonProps) => {
         <CartIcon />
       </span>
       <span>Your Cart</span>
-      <span className={classes.badge}>{cartCtx.totalAmount}</span>
+      <span className={classes.badge}>{totalAmount}</span>
     </button>
   );
 };

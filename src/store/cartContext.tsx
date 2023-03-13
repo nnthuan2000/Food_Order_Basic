@@ -1,10 +1,11 @@
 import React from "react";
 
-import { ICartContext } from "../models/ICart";
+import { ICartContext } from "../models/Cart";
 
 const CartContext = React.createContext<ICartContext>({
   items: [],
   totalAmount: 0,
+  totalPrice: 0,
   addItem: (item) => {},
   removeItem: (id) => {},
 });

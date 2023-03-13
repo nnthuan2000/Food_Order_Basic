@@ -6,21 +6,38 @@ import CartItem from "./CartItem";
 import Modal from "../UI/Modal/Modal";
 
 import classes from "./Cart.module.css";
+import { ICartItem } from "../../models/Cart";
 
 interface CartProps {
   onClose: () => void;
 }
 
 const Cart = ({ onClose }: CartProps) => {
-  const { items, totalAmount } = useContext(CartContext);
+  const { items, totalPrice, addItem, removeItem } = useContext(CartContext);
 
   const hasItem = items.length > 0;
-  const totalAmountFormated = `$${totalAmount.toFixed(2)}`;
+  const totalPriceFormated = `$${totalPrice.toFixed(2)}`;
+
+  const addItemToCartHandler = (item: ICartItem) => {
+    addItem({
+      ...item,
+      amount: 1,
+    });
+  };
+
+  const removeItemFromCartHandler = (id: string) => {
+    removeItem(id);
+  };
 
   const cartItems = (
-    <ul>
+    <ul className={classes["cart-items"]}>
       {items.map((item) => (
-        <CartItem key={item.id} {...item} />
+        <CartItem
+          key={item.id}
+          {...item}
+          onAdd={addItemToCartHandler.bind(null, item)}
+          onRemove={removeItemFromCartHandler.bind(null, item.id)}
+        />
       ))}
     </ul>
   );
@@ -29,8 +46,8 @@ const Cart = ({ onClose }: CartProps) => {
     <Modal onClose={onClose}>
       {cartItems}
       <div className={classes.total}>
-        <span>Total Amount</span>
-        <span>{totalAmountFormated}</span>
+        <span>Total Price</span>
+        <span>{totalPriceFormated}</span>
       </div>
 
       <div className={classes.actions}>
