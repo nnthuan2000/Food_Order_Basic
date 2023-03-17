@@ -1,4 +1,6 @@
-import React, { useImperativeHandle, useState } from "react";
+import React, { useImperativeHandle, useRef } from "react";
+
+import useInput from "../../../hooks/useInput";
 
 import { IInput, IInputRef } from "../../../models/Input";
 
@@ -10,34 +12,50 @@ interface InputProps {
 }
 
 const Input = React.forwardRef<IInputRef, InputProps>(({ label, input }, ref) => {
-  const [currentValue, setCurrentValue] = useState<number>(parseInt(input.defaultValue));
+  const { value, isValid, error, changeHandler, blurHandler, resetHandler } = useInput(
+    input.defaultValue || "",
+    input.validate
+  );
 
-  const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.trim().length === 0) {
-      return;
-    }
-    setCurrentValue(parseInt(e.target.value));
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const activate = () => {
+    inputRef.current!.focus();
   };
 
   useImperativeHandle(ref, () => {
     return {
-      value: currentValue.toString(),
-    } as IInputRef;
+      value,
+      isValid,
+      isError: error,
+      resetValue: resetHandler,
+      focus: activate,
+    };
   });
 
+  let inputClasses = classes.input;
+
+  if (input.type === "text") inputClasses += ` ${classes.text}`;
+  if (error) inputClasses += ` ${classes.invalid}`;
+
   return (
-    <div className={classes.input}>
-      <label htmlFor={input.id}>{label}</label>
-      <input
-        type={input.type}
-        id={input.id}
-        min={input.min}
-        max={input.max}
-        step={input.step}
-        value={currentValue}
-        onChange={changeHandler}
-      />
-    </div>
+    <React.Fragment>
+      <div className={inputClasses}>
+        <label htmlFor={input.id}>{label}</label>
+        <input
+          ref={inputRef}
+          type={input.type}
+          id={input.id}
+          min={input.min}
+          max={input.max}
+          step={input.step}
+          value={value}
+          onChange={changeHandler}
+          onBlur={blurHandler}
+        />
+      </div>
+      {error && <p className={classes["error-text"]}>{input.errorMessage}</p>}
+    </React.Fragment>
   );
 });
 

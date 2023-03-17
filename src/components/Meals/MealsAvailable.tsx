@@ -1,3 +1,5 @@
+import React from "react";
+
 import MealItem from "./MealItem/MealItem";
 import Card from "../UI/Card/Card";
 
@@ -32,7 +34,7 @@ const DUMMY_MEALS: IMeal[] = [
   },
 ];
 
-const MealsAvailable = (props: any) => {
+const MealsAvailable = () => {
   const meals = DUMMY_MEALS.map((meal) => <MealItem key={meal.id} {...meal} />);
 
   return (

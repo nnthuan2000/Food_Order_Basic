@@ -7,6 +7,7 @@
 .input label {
   font-weight: bold;
   margin-right: 1rem;
+  min-width: 6rem;
 }
 
 .input input {
@@ -14,5 +15,29 @@
   border-radius: 5px;
   border: 1px solid #ccc;
   font: inherit;
-  padding-left: 0.5rem;
+}
+
+.input input:focus {
+  outline: none;
+  border-color: #4f005f;
+  background-color: #f6dbfc;
+}
+
+.text input {
+  width: 16rem;
+}
+
+.invalid label {
+  color: #ca3e51;
+}
+
+.invalid input {
+  border-color: #aa0b20;
+  background-color: #ffeff1;
+}
+
+.error-text {
+  font-size: 0.8rem;
+  margin: 0 0 0.4rem 7rem;
+  color: #aa0b20;
 }

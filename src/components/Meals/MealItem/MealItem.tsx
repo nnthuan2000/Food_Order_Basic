@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import React, { useContext, useCallback } from "react";
 
 import CartContext from "../../../store/cartContext";
 import MealItemForm from "./MealItemForm";
@@ -12,14 +12,17 @@ const MealItem = ({ id, name, description, price }: IMeal) => {
 
   const priceFormated = `$${price.toFixed(2)}`;
 
-  const addToCartHandler = (id: string, amount: number) => {
-    addItem({
-      id: id,
-      name: name,
-      amount: amount,
-      price: price,
-    });
-  };
+  const addToCartHandler = useCallback(
+    (id: string, amount: number) => {
+      addItem({
+        id: id,
+        name: name,
+        amount: amount,
+        price: price,
+      });
+    },
+    [addItem, name, price]
+  );
 
   return (
     <li className={classes.meal}>
@@ -35,4 +38,4 @@ const MealItem = ({ id, name, description, price }: IMeal) => {
   );
 };
 
-export default MealItem;
+export default React.memo(MealItem);

@@ -8,7 +8,10 @@ interface CartProviderProps {
   children: React.ReactNode;
 }
 
-type Action = { type: "ADD"; payload: ICartItem } | { type: "REMOVE"; payload: string; isRemoveAll: boolean };
+type Action =
+  | { type: "ADD"; payload: ICartItem }
+  | { type: "REMOVE"; payload: string; isRemoveAll: boolean }
+  | { type: "CLEAR" };
 
 type Reducer<T, U> = (state: T, action: U) => T;
 
@@ -72,6 +75,9 @@ const cartReducer: Reducer<ICarts, Action> = (state, action) => {
       };
     }
   }
+  if (action.type === "CLEAR") {
+    return cartStateDefault;
+  }
   return cartStateDefault;
 };
 
@@ -86,12 +92,17 @@ const CartProvider = ({ children }: CartProviderProps) => {
     dispatchCartAction({ type: "REMOVE", payload: id, isRemoveAll: isRemoveAll });
   };
 
+  const clearAllItemsFromCartHandler = () => {
+    dispatchCartAction({ type: "CLEAR" });
+  };
+
   const cartContext: ICartContext = {
     items: cartState.items,
     totalAmount: cartState.totalAmount,
     totalPrice: cartState.totalPrice,
     addItem: addItemToCartHandler,
     removeItem: removeItemFromCartHandler,
+    clearAllItems: clearAllItemsFromCartHandler,
   };
 
   return <CartContext.Provider value={cartContext}>{children}</CartContext.Provider>;

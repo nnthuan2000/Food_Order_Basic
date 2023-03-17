@@ -1,12 +1,13 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 
+import { ICartItem } from "../../models/Cart";
 import CartContext from "../../store/cartContext";
 import CartItem from "./CartItem";
+import Checkout from "./Checkout";
 
 import Modal from "../UI/Modal/Modal";
 
 import classes from "./Cart.module.css";
-import { ICartItem } from "../../models/Cart";
 
 interface CartProps {
   onClose: () => void;
@@ -14,6 +15,7 @@ interface CartProps {
 
 const Cart = ({ onClose }: CartProps) => {
   const { items, totalPrice, addItem, removeItem } = useContext(CartContext);
+  const [isOrder, setIsOrder] = useState<boolean>(false);
 
   const hasItem = items.length > 0;
   const totalPriceFormated = `$${Math.abs(totalPrice).toFixed(2)}`;
@@ -33,6 +35,10 @@ const Cart = ({ onClose }: CartProps) => {
     removeItem(id, isRemoveAll);
   };
 
+  const orderHandler = () => {
+    setIsOrder(true);
+  };
+
   const cartItems = (
     <ul className={classes["cart-items"]}>
       {items.map((item) => (
@@ -47,20 +53,34 @@ const Cart = ({ onClose }: CartProps) => {
     </ul>
   );
 
-  return (
-    <Modal onClose={onClose}>
+  const modalAction = (
+    <div className={classes.actions}>
+      <button className={classes["button--alt"]} onClick={onClose}>
+        Close
+      </button>
+      {hasItem && (
+        <button className={classes.button} onClick={orderHandler}>
+          Order
+        </button>
+      )}
+    </div>
+  );
+
+  const cartModalContent = (
+    <React.Fragment>
       {cartItems}
       <div className={classes.total}>
         <span>Total Price</span>
         <span>{totalPriceFormated}</span>
       </div>
+      {modalAction}
+    </React.Fragment>
+  );
 
-      <div className={classes.actions}>
-        <button className={classes["button--alt"]} onClick={onClose}>
-          Close
-        </button>
-        {hasItem && <button className={classes.button}>Order</button>}
-      </div>
+  return (
+    <Modal onClose={onClose}>
+      {cartModalContent}
+      {isOrder && hasItem && <Checkout onCancel={onClose} />}
     </Modal>
   );
 };

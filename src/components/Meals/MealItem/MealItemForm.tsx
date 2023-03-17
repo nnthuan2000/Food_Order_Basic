@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 import Input from "../../UI/Input/Input";
 
@@ -12,18 +12,14 @@ interface MealItemFormProps {
 }
 
 const MealItemForm = ({ id, onAddMealToCart }: MealItemFormProps) => {
-  const [amountIsValid, setAmountIsValid] = useState<boolean | null>(null);
   const amountInputRef = useRef<IInputRef>(null);
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const enteredAmount = amountInputRef.current!.value;
-    if (enteredAmount.trim().length === 0) {
-      setAmountIsValid(false);
-      return;
-    }
     onAddMealToCart(id, +enteredAmount);
+    amountInputRef.current!.resetValue();
   };
 
   return (
@@ -38,12 +34,13 @@ const MealItemForm = ({ id, onAddMealToCart }: MealItemFormProps) => {
           max: "5",
           step: "1",
           defaultValue: "1",
+          errorMessage: "Amount in invalid, please in (1-5)",
+          validate: (value) => !isNaN(Number(value)),
         }}
       />
       <button type="submit">+ Add</button>
-      {amountIsValid === false && <p>Amount in invalid, please in (1-5)</p>}
     </form>
   );
 };
 
-export default MealItemForm;
+export default React.memo(MealItemForm);
