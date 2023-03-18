@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import MealItem from "./MealItem/MealItem";
 import Card from "../UI/Card/Card";
@@ -7,43 +7,59 @@ import { IMeal } from "../../models/Meal";
 
 import classes from "./MealsAvailable.module.css";
 
-const DUMMY_MEALS: IMeal[] = [
-  {
-    id: "m1",
-    name: "Sushi",
-    description: "Finest fish and veggies",
-    price: 22.99,
-  },
-  {
-    id: "m2",
-    name: "Schnitzel",
-    description: "A german specialty!",
-    price: 16.5,
-  },
-  {
-    id: "m3",
-    name: "Barbecue Burger",
-    description: "American, raw, meaty",
-    price: 12.99,
-  },
-  {
-    id: "m4",
-    name: "Green Bowl",
-    description: "Healthy...and green...",
-    price: 18.99,
-  },
-];
-
 const MealsAvailable = () => {
-  const meals = DUMMY_MEALS.map((meal) => <MealItem key={meal.id} {...meal} />);
+  const [meals, setMeals] = useState<IMeal[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
-  return (
-    <section className={classes.meals}>
-      <Card>
-        <ul>{meals}</ul>
-      </Card>
-    </section>
+  useEffect(() => {
+    const fetchMeals = async () => {
+      setIsLoading(true);
+      const response = await fetch(
+        "https://react-http-e9233-default-rtdb.asia-southeast1.firebasedatabase.app/meals.json"
+      );
+      if (!response.ok) {
+        throw new Error("Something went wrong");
+      }
+      const data = await response.json();
+
+      const loadedData = Object.keys(data).reduce<IMeal[]>((arr, key) => {
+        arr.push({ id: key, ...data[key] });
+        return arr;
+      }, []);
+
+      setMeals(loadedData);
+      setIsLoading(false);
+    };
+
+    fetchMeals().catch((error: unknown) => {
+      setError((error as Error).message);
+    });
+  }, []);
+
+  let mealsContent = (
+    <Card>
+      <ul>
+        {meals.map((meal) => (
+          <MealItem key={meal.id} {...meal} />
+        ))}
+      </ul>
+    </Card>
   );
+
+  let classNames = classes.meals;
+
+  if (isLoading) {
+    classNames = classes["meals-loading"];
+    mealsContent = <p>Loading some meals...</p>;
+  }
+
+  if (error) {
+    classNames = classes["meals-error"];
+    mealsContent = <p>{error}</p>;
+  }
+
+  return <section className={`${classNames}`}>{mealsContent}</section>;
 };
 
 export default MealsAvailable;

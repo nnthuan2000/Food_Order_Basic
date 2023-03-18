@@ -28,7 +28,7 @@ const MealItem = ({ id, name, description, price }: IMeal) => {
     <li className={classes.meal}>
       <div className="">
         <h3>{name}</h3>
-        <div className={classes.description}>description</div>
+        <div className={classes.description}>{description}</div>
         <div className={classes.price}>{priceFormated}</div>
       </div>
       <div>

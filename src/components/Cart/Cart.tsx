@@ -8,14 +8,18 @@ import Checkout from "./Checkout";
 import Modal from "../UI/Modal/Modal";
 
 import classes from "./Cart.module.css";
+import { IUser } from "../../models/User";
 
 interface CartProps {
   onClose: () => void;
 }
 
 const Cart = ({ onClose }: CartProps) => {
-  const { items, totalPrice, addItem, removeItem } = useContext(CartContext);
-  const [isOrder, setIsOrder] = useState<boolean>(false);
+  const { items, totalPrice, addItem, removeItem, clearAllItems } = useContext(CartContext);
+  const [isCheckout, setIsCheckout] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   const hasItem = items.length > 0;
   const totalPriceFormated = `$${Math.abs(totalPrice).toFixed(2)}`;
@@ -36,7 +40,22 @@ const Cart = ({ onClose }: CartProps) => {
   };
 
   const orderHandler = () => {
-    setIsOrder(true);
+    setIsCheckout(true);
+  };
+
+  const confirmHandler = async (user: IUser) => {
+    setIsSubmitting(true);
+    await fetch("https://react-http-e9233-default-rtdb.asia-southeast1.firebasedatabase.app/orders.json", {
+      method: "POST",
+      body: JSON.stringify({
+        orderItems: items,
+        user,
+      }),
+    });
+
+    setIsSubmitting(false);
+    setIsSubmitted(true);
+    clearAllItems();
   };
 
   const cartItems = (
@@ -73,14 +92,28 @@ const Cart = ({ onClose }: CartProps) => {
         <span>Total Price</span>
         <span>{totalPriceFormated}</span>
       </div>
-      {modalAction}
+
+      {isCheckout && hasItem && <Checkout onCancel={onClose} onConfirm={confirmHandler} />}
+      {!isCheckout && modalAction}
+    </React.Fragment>
+  );
+
+  const submittedModalContent = (
+    <React.Fragment>
+      <p>Successfully sent the order</p>
+      <div className={classes.actions}>
+        <button className={classes.button} onClick={onClose}>
+          Close
+        </button>
+      </div>
     </React.Fragment>
   );
 
   return (
     <Modal onClose={onClose}>
-      {cartModalContent}
-      {isOrder && hasItem && <Checkout onCancel={onClose} />}
+      {!isSubmitting && !isSubmitted && cartModalContent}
+      {isSubmitting && <p>Sending orders...</p>}
+      {!isSubmitting && isSubmitted && submittedModalContent}
     </Modal>
   );
 };

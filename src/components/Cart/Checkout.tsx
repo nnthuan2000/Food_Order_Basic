@@ -4,15 +4,17 @@ import Input from "../UI/Input/Input";
 import { IInputRef } from "../../models/Input";
 
 import classes from "./Checkout.module.css";
+import { IUser } from "../../models/User";
 
 interface CheckoutProps {
+  onConfirm: (userData: IUser) => void;
   onCancel: () => void;
 }
 
 const isEmpty = (value: string) => value.trim() !== "";
 const moreThanFiveChars = (value: string) => value.trim().length >= 5;
 
-const Checkout = ({ onCancel }: CheckoutProps) => {
+const Checkout = ({ onCancel, onConfirm }: CheckoutProps) => {
   const nameInputRef = useRef<IInputRef>(null);
   const streetInputRef = useRef<IInputRef>(null);
   const postalCodeInputRef = useRef<IInputRef>(null);
@@ -35,7 +37,12 @@ const Checkout = ({ onCancel }: CheckoutProps) => {
     } else if (cityInputIsInvalid) {
       cityInputRef.current!.focus();
     } else {
-      console.log("Form is valid");
+      onConfirm({
+        name: nameInputRef.current.value,
+        street: streetInputRef.current.value,
+        postalCode: postalCodeInputRef.current.value,
+        city: cityInputRef.current.value,
+      });
     }
   };
 
