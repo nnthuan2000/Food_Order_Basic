@@ -19,7 +19,6 @@ const Cart = ({ onClose }: CartProps) => {
   const [isCheckout, setIsCheckout] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
 
   const hasItem = items.length > 0;
   const totalPriceFormated = `$${Math.abs(totalPrice).toFixed(2)}`;
